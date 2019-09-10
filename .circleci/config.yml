@@ -35,4 +35,5 @@ jobs: # a collection of steps
       - run: php artisan migrate --force
       - run:
           command: |
-            ./vendor/bin/phpunit --stop-on-defect --coverage-text tests/
+            ./phpunit.sh
+            bash <(curl -s https://codecov.io/bash)

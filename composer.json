@@ -18,7 +18,8 @@
         "fzaninotto/faker": "^1.4",
         "mockery/mockery": "^1.0",
         "nunomaduro/collision": "^3.0",
-        "phpunit/phpunit": "^8.0"
+        "phpunit/phpunit": "^8.0",
+        "squizlabs/php_codesniffer": "^3.4"
     },
     "config": {
         "optimize-autoloader": true,
@@ -49,6 +50,7 @@
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php -r \"file_exists('.git') && copy('.git-pre-commit', '.git/hooks/pre-commit') && chmod('.git/hooks/pre-commit', 0755);\"",
             "@php artisan package:discover --ansi"
         ],
         "post-root-package-install": [

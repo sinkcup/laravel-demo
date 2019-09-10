@@ -35,5 +35,6 @@ jobs: # a collection of steps
       - run: php artisan migrate --force
       - run:
           command: |
+            ./lint.sh
             ./phpunit.sh
             bash <(curl -s https://codecov.io/bash)

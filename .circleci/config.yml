@@ -23,12 +23,12 @@ jobs: # a collection of steps
       - restore_cache: # special step to restore the dependency cache if `yarn.lock` does not change
           keys:
             # when lock file changes, use increasingly general patterns to restore cache
-            - yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - yarn-packages-v1-{{ .Branch }}-
-            - yarn-packages-v1-
-      - run: yarn install
-      - save_cache: # special step to save the dependency cache with the `yarn.lock` cache key template
-          key: yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - node-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - node-v1-{{ .Branch }}-
+            - node-v1-
+      - run: npm install
+      - save_cache:
+          key: node-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
       - run: touch database/database.sqlite

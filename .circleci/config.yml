@@ -1,0 +1,38 @@
+version: 2 # use CircleCI 2.0
+
+jobs: # a collection of steps
+  build: # runs not using Workflows must have a `build` job as entry point
+    docker: # run the steps with Docker
+      - image: circleci/php:7.3-node-browsers # ...with this image as the primary container; this is where all `steps` will run
+    working_directory: ~/laravel # directory where steps will run
+    steps: # a set of executable commands
+      - checkout # special step to check out source code to working directory
+      - run: sudo apt install -y libsqlite3-dev zlib1g-dev
+      - run: sudo docker-php-ext-install zip
+      - run: sudo composer self-update
+      - restore_cache: # special step to restore the dependency cache if `composer.lock` does not change
+          keys:
+            - composer-v1-{{ checksum "composer.lock" }}
+            # fallback to using the latest cache if no exact match is found (See https://circleci.com/docs/2.0/caching/)
+            - composer-v1-
+      - run: composer install -n --prefer-dist
+      - save_cache: # special step to save the dependency cache with the `composer.lock` cache key template
+          key: composer-v1-{{ checksum "composer.lock" }}
+          paths:
+            - vendor
+      - restore_cache: # special step to restore the dependency cache if `yarn.lock` does not change
+          keys:
+            # when lock file changes, use increasingly general patterns to restore cache
+            - yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - yarn-packages-v1-{{ .Branch }}-
+            - yarn-packages-v1-
+      - run: yarn install
+      - save_cache: # special step to save the dependency cache with the `yarn.lock` cache key template
+          key: yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+      - run: touch database/database.sqlite
+      - run: php artisan migrate --force
+      - run:
+          command: |
+            ./vendor/bin/phpunit --stop-on-defect --coverage-text tests/

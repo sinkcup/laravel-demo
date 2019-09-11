@@ -1,3 +1,4 @@
+/.idea/
 /node_modules
 /public/hot
 /public/storage
@@ -5,7 +6,10 @@
 /vendor
 .env
 .env.backup
+.phpstorm.meta.php
 .phpunit.result.cache
+_ide_helper.php
+clover.xml
 Homestead.json
 Homestead.yaml
 npm-debug.log

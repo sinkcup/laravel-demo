@@ -1,8 +1,14 @@
+.circleci/
 .dockerignore
+.gitignore
 .env
-.git
+.git/
+.idea/
+.phpstorm.meta.php
 .phpunit.result.cache
+_ide_helper.php
 bootstrap/cache/*
+clover.xml
 Dockerfile
 Homestead.json
 Homestead.yaml
@@ -13,7 +19,7 @@ public/storage
 storage/*.key
 storage/app/public/*
 storage/framework/*/*
-storage/logs/
+storage/logs/*
 tests/
 vendor/
 yarn-error.log

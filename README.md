@@ -7,3 +7,18 @@
 This project provides CI(CircleCI), Docker, lint(phpcs), test(phpunit and codecov) for Laravel.
 
 PS: this Docker is for production not local development.
+
+## IDE Helper
+
+How to run composer script only in dev? such as [ide-helper](https://github.com/barryvdh/laravel-ide-helper), it's required in dev, if you run it in `composer.json`, it will crash when to deploy using `composer install --optimize-autoloader --no-dev`.
+
+the best way is:
+
+```
+"scripts":{
+    "post-install-cmd": [
+        "if (php artisan | grep 'ide-helper:generate'); then php artisan ide-helper:generate; fi",
+        "if (php artisan | grep 'ide-helper:meta'); then php artisan ide-helper:meta; fi"
+    ]
+},
+```

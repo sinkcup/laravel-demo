@@ -9,7 +9,6 @@ jobs: # a collection of steps
         environment:
           MYSQL_DATABASE: forge
           MYSQL_USER: forge
-          MYSQL_PASSWORD: ''
           MYSQL_ALLOW_EMPTY_PASSWORD: true
     working_directory: ~/laravel # directory where steps will run
     steps: # a set of executable commands

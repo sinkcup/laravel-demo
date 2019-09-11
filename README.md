@@ -22,3 +22,16 @@ the best way is:
     ]
 },
 ```
+
+## CircleCI
+
+Environment Variables:
+
+Name | Value
+-----|--------------
+APP_ENV | testing
+APP_KEY	| generate by `php artisan key:generate --show`
+CODECOV_TOKEN | get from [codecov.io](https://codecov.io/)
+DB_PASSWORD | passw0rd
+
+![CircleCI Environment Variables](https://user-images.githubusercontent.com/4971414/64674927-80ac2080-d4a4-11e9-8448-6e9f4a67a128.png)

@@ -17,7 +17,8 @@ jobs: # a collection of steps
       - run: sudo apt install -y gnupg2 libjpeg-dev libpng-dev libsqlite3-dev zlib1g-dev
       - run: sudo -E docker-php-ext-configure gd --with-gd --with-jpeg-dir --with-png-dir --with-zlib-dir
       - run: sudo -E docker-php-ext-install gd intl pdo_mysql zip
-      - run: sudo -E docker-php-ext-enable opcache
+      - run: sudo bash -c "yes '' | pecl install redis"
+      - run: sudo -E docker-php-ext-enable opcache redis
       - run: sudo composer self-update
       - run:
           name: Wait for DB

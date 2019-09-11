@@ -9,6 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.2",
+        "ext-json": "*",
         "ext-redis": "*",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "^6.0",
@@ -53,17 +54,15 @@
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php -r \"file_exists('.git') && copy('.git-pre-commit', '.git/hooks/pre-commit') && chmod('.git/hooks/pre-commit', 0755);\"",
-            "@php artisan package:discover --ansi"
+            "@php artisan package:discover --ansi",
+            "if (php artisan | grep 'ide-helper:generate'); then php artisan ide-helper:generate; fi",
+            "if (php artisan | grep 'ide-helper:meta'); then php artisan ide-helper:meta; fi"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
-        ],
-        "post-install-cmd": [
-            "if (php artisan | grep 'ide-helper:generate'); then php artisan ide-helper:generate; fi",
-            "if (php artisan | grep 'ide-helper:meta'); then php artisan ide-helper:meta; fi"
         ]
     }
 }

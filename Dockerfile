@@ -10,10 +10,11 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
     nodejs \
     unzip \
     zlib1g-dev
-RUN docker-php-ext-configure gd --with-freetype-dir --with-gd --with-jpeg-dir --with-png-dir --with-webp-dir --with-xpm-dir --with-zlib-dir \
+RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini \
+    && yes '' | pecl install redis \
+    && docker-php-ext-configure gd --with-freetype-dir --with-gd --with-jpeg-dir --with-png-dir --with-webp-dir --with-xpm-dir --with-zlib-dir \
     && docker-php-ext-install gd intl pdo_mysql zip \
-    && docker-php-ext-enable opcache \
-    && cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
+    && docker-php-ext-enable opcache redis
 RUN apt-get clean \
     && apt-get autoclean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

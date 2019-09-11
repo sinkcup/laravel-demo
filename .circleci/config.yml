@@ -10,6 +10,7 @@ jobs: # a collection of steps
           MYSQL_DATABASE: forge
           MYSQL_USER: forge
           MYSQL_PASSWORD: passw0rd
+      - image: redis
     working_directory: ~/laravel # directory where steps will run
     steps: # a set of executable commands
       - checkout # special step to check out source code to working directory
@@ -22,6 +23,9 @@ jobs: # a collection of steps
           name: Wait for DB
           # preinstalled in circleci/* docker image
           command: dockerize -wait tcp://127.0.0.1:3306 -timeout 120s
+      - run:
+          name: Wait for Redis to receive connections
+          command: dockerize -wait tcp://localhost:6379 -timeout 20s
       - restore_cache: # special step to restore the dependency cache if `composer.lock` does not change
           keys:
             - composer-v1-{{ checksum "composer.lock" }}

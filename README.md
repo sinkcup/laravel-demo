@@ -4,13 +4,13 @@
 [![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/sinkcup/laravel-demo.svg)](https://hub.docker.com/r/sinkcup/laravel-demo)
 [![codecov](https://codecov.io/gh/sinkcup/laravel-demo/branch/6.0/graph/badge.svg)](https://codecov.io/gh/sinkcup/laravel-demo)
 
-This project provides CI(CircleCI), Docker, lint(phpcs), test(phpunit and codecov) for Laravel.
-
-PS: this Docker is for production not local development.
+This project provides CI, Docker, Lint, Tests for Laravel.
 
 ## Docker
 
-this Laravel Docker has 3 roles, you can switch by `CONTAINER_ROLE: app/scheduler/queue`:
+This Laravel Docker is for production not local development.
+
+It has 3 roles, you can switch by `CONTAINER_ROLE: app/scheduler/queue`:
 
 ```
 # default web app
@@ -27,8 +27,8 @@ docker run --rm --name laravel_demo_queue -e DB_CONNECTION=sqlite -e CONTAINER_R
 
 detail:
 
-- It's wrong to save the log to file when using Docker, should output to stdout, so I have changed `config/logging.php`.
-- Laravel default routes can't be cached, it has error: "Unable to prepare route [/] for serialization. Uses Closure.", so I have changed `route/web.php` and `route/api.php`.
+- Laravel default log config is saving to file, it's wrong in Docker, should output to stdout, so I have changed `config/logging.php`.
+- Laravel default routes can't be cached, it has error: "Unable to prepare route [/] for serialization. Uses Closure.", so I have changed `routes/web.php` and `routes/api.php`.
 - Docker can run cron in the foreground, should never run it in background.
 
 ## IDE Helper
@@ -62,3 +62,23 @@ CODECOV_TOKEN | get from [codecov.io](https://codecov.io/)
 DB_PASSWORD | Passw0rd!
 
 ![CircleCI Environment Variables](https://user-images.githubusercontent.com/4971414/64674927-80ac2080-d4a4-11e9-8448-6e9f4a67a128.png)
+
+## Lint
+
+This project use [PSR12 coding standard](https://www.php-fig.org/psr/psr-12/), you can find rules in `phpcs.xml`.
+
+When you run `composer install`, the `.git-pre-commit` will be copyed to `.git/hooks/pre-commit`, so it will check locally when you commit codes.
+
+If there are some format errors, you could try to fix automatically:
+
+```
+./lint.sh --fix
+```
+
+You can find `lint.sh` run in `.circleci/config.yml`, so it will check coding standard when codes pushed or a PR created.
+
+## Tests
+
+When you run `./phpunit.sh`, it will save coverage report to `clover.xml`.
+
+You can register for a TOKEN on [codecov.io](https://codecov.io/), so CI can upload the report to it.

@@ -1,8 +1,8 @@
-# Laravel 6.0 Demo
+# Laravel 6 Demo
 
-[![CircleCI](https://circleci.com/gh/sinkcup/laravel-demo/tree/6.0.svg?style=svg)](https://circleci.com/gh/sinkcup/laravel-demo/tree/6.0)
+[![CircleCI](https://circleci.com/gh/sinkcup/laravel-demo/tree/6.x.svg?style=svg)](https://circleci.com/gh/sinkcup/laravel-demo/tree/6.x)
 [![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/sinkcup/laravel-demo.svg)](https://hub.docker.com/r/sinkcup/laravel-demo)
-[![codecov](https://codecov.io/gh/sinkcup/laravel-demo/branch/6.0/graph/badge.svg)](https://codecov.io/gh/sinkcup/laravel-demo)
+[![codecov](https://codecov.io/gh/sinkcup/laravel-demo/branch/6.x/graph/badge.svg)](https://codecov.io/gh/sinkcup/laravel-demo)
 
 This project provides CI, Docker, Lint, Tests for Laravel.
 
@@ -14,13 +14,13 @@ It has 3 roles, you can switch by `CONTAINER_ROLE: app/scheduler/queue`:
 
 ```
 # default web app
-docker run --rm --name laravel_demo -e DB_CONNECTION=sqlite -t sinkcup/laravel-demo:6.0
+docker run --rm --name laravel_demo -e DB_CONNECTION=sqlite -t sinkcup/laravel-demo:6
 
 # scheduler(cron)
-docker run --rm --name laravel_demo_scheduler -e DB_CONNECTION=sqlite -e CONTAINER_ROLE=scheduler -t sinkcup/laravel-demo:6.0
+docker run --rm --name laravel_demo_scheduler -e DB_CONNECTION=sqlite -e CONTAINER_ROLE=scheduler -t sinkcup/laravel-demo:6
 
 # queue
-docker run --rm --name laravel_demo_queue -e DB_CONNECTION=sqlite -e CONTAINER_ROLE=queue -t sinkcup/laravel-demo:6.0
+docker run --rm --name laravel_demo_queue -e DB_CONNECTION=sqlite -e CONTAINER_ROLE=queue -t sinkcup/laravel-demo:6
 ```
 
 ![docker run](https://user-images.githubusercontent.com/4971414/64695831-a0a50980-d4cf-11e9-978a-e1dbf96ea738.png)

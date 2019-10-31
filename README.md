@@ -3,6 +3,7 @@
 [![CircleCI](https://circleci.com/gh/sinkcup/laravel-demo/tree/6.x.svg?style=svg)](https://circleci.com/gh/sinkcup/laravel-demo/tree/6.x)
 [![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/sinkcup/laravel-demo.svg)](https://hub.docker.com/r/sinkcup/laravel-demo)
 [![codecov](https://codecov.io/gh/sinkcup/laravel-demo/branch/6.x/graph/badge.svg)](https://codecov.io/gh/sinkcup/laravel-demo)
+[![coverage](./coverage.png)](https://github.com/sinkcup/laravel-demo)
 
 This project provides CI, Docker, Lint, Tests for Laravel.
 

@@ -40,7 +40,7 @@ class ExampleTest extends TestCase
         $redis = new Redis();
         try {
             $redis->connect(config('database.redis.default.host'));
-        } catch (\ErrorException $e) {
+        } catch (\Exception $e) {
             Log::warning($e->getMessage());
             return;
         }
@@ -56,7 +56,7 @@ class ExampleTest extends TestCase
         $key = 'user:profile:' . $this->faker->randomNumber();
         try {
             RedisManager::hmset($key, $user->toArray());
-        } catch (\ErrorException $e) {
+        } catch (\Exception $e) {
             Log::warning($e->getMessage());
             return;
         }

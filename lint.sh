@@ -117,6 +117,9 @@ fi
 ERRORS=0
 for FILENAME in $FILES
 do
+    if [ ! -f "$FILENAME" ]; then
+        continue
+    fi
     OUTPUT=$($BIN_PATH --standard=$STANDARD "$FILENAME")
     if [ $? -ne 0 ]; then
         ERRORS=$((ERRORS+1))

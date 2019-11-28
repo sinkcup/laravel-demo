@@ -3,12 +3,18 @@
 [![CircleCI](https://circleci.com/gh/sinkcup/laravel-demo/tree/6.x.svg?style=svg)](https://circleci.com/gh/sinkcup/laravel-demo/tree/6.x)
 [![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/sinkcup/laravel-demo.svg)](https://hub.docker.com/r/sinkcup/laravel-demo)
 [![codecov](https://codecov.io/gh/sinkcup/laravel-demo/branch/6.x/graph/badge.svg)](https://codecov.io/gh/sinkcup/laravel-demo)
+![coverage](https://raw.githubusercontent.com/sinkcup/laravel-demo/6.x/coverage.png)
 
 This project provides CI, Docker, Lint, Tests for Laravel.
 
 ## Docker
 
-This Laravel Docker is for production not local development.
+This project build two Dockers for production and development.
+
+```
+docker pull sinkcup/laravel-demo:6
+docker pull sinkcup/laravel-demo:6-dev
+```
 
 It has 3 roles, you can switch by `CONTAINER_ROLE: app/scheduler/queue`:
 

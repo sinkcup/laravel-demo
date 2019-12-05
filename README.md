@@ -105,12 +105,9 @@ Environment Variables:
 
 Name | Value
 -----|--------------
-APP_ENV | testing
-APP_KEY	| generate by `php artisan key:generate --show`
-CODECOV_TOKEN | get from [codecov.io](https://codecov.io/)
-DB_PASSWORD | Passw0rd!
+CODECOV_TOKEN | optional, get from [codecov.io](https://codecov.io/)
 
-![CircleCI Environment Variables](https://user-images.githubusercontent.com/4971414/64674927-80ac2080-d4a4-11e9-8448-6e9f4a67a128.png)
+![CircleCI Environment Variables](https://user-images.githubusercontent.com/4971414/70208756-539ca080-1769-11ea-95f8-de50a01eecbd.png)
 
 ### Jenkins\([CODING.net free CI](https://coding.net/products/ci?cps_source=PIevZ6Jr)\)
 
@@ -124,4 +121,4 @@ DOCKER_SERVER | optional, Docker server
 DOCKER_PATH_PREFIX | optional, Docker path prefix
 SPEED | optional, change mirror to speed up docker build, values: up/down/keep
 
-![CODING CI Environment Variables](https://user-images.githubusercontent.com/4971414/70202174-d9155600-1753-11ea-9396-b8fd5f15db47.png)
+![CODING CI Environment Variables](https://user-images.githubusercontent.com/4971414/70208810-7c249a80-1769-11ea-979f-45a56e79a126.png)

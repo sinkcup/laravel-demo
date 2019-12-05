@@ -1,29 +1,49 @@
 FROM php:7.3-apache
 MAINTAINER sinkcup <sinkcup@gmail.com>
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
+ARG APP_ENV=production
+ARG SPEED=keep
+WORKDIR /var/www/laravel
+COPY speed /var/www/laravel/
+RUN ./speed -s $SPEED apt
+
+RUN curl -sS https://getcomposer.org/installer -o composer-setup.php \
+    && ./speed -s $SPEED composer_setup \
+    && php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+
+RUN curl -sL https://deb.nodesource.com/setup_12.x -o nodejs_setup.sh \
+    && ./speed -s $SPEED nodejs_setup \
+    && bash ./nodejs_setup.sh
+
+RUN apt-get update \
     && apt-get install -y \
     cron \
     icu-devtools \
+    jq \
     libfreetype6-dev libicu-dev libjpeg62-turbo-dev libpng-dev libsasl2-dev libssl-dev libwebp-dev libxpm-dev libzip-dev \
     nodejs \
     unzip \
     zlib1g-dev
+RUN if [ "$APP_ENV" != "production" ]; then apt-get install -y git librsvg2-bin vim; fi
+RUN apt-get clean \
+    && apt-get autoclean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini \
     && yes '' | pecl install redis \
     && docker-php-ext-configure gd --with-freetype-dir --with-gd --with-jpeg-dir --with-png-dir --with-webp-dir --with-xpm-dir --with-zlib-dir \
     && docker-php-ext-install gd intl pdo_mysql zip \
     && docker-php-ext-enable opcache redis
-RUN apt-get clean \
-    && apt-get autoclean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-WORKDIR /var/www/laravel
+RUN if [ "$APP_ENV" != "production" ]; then \
+        cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini \
+        && pecl install xdebug \
+        && docker-php-ext-enable xdebug \
+    ; fi
 
 COPY composer.json /var/www/laravel/
 COPY composer.lock /var/www/laravel/
-RUN composer install --no-autoloader --no-scripts --no-dev
+RUN ./speed -s $SPEED composer \
+    && composer install --no-autoloader --no-scripts --no-dev
 
 # Compiling Assets. uncomment these lines after you install Laravel UI
 #COPY package.json /var/www/laravel/
@@ -44,7 +64,11 @@ COPY resources /var/www/laravel/resources
 COPY routes /var/www/laravel/routes
 COPY server.php /var/www/laravel/server.php
 COPY storage /var/www/laravel/storage
-RUN composer install --optimize-autoloader --no-dev
+RUN if [ "$APP_ENV" = "production" ]; then \
+        composer install --optimize-autoloader --no-dev \
+    ; else \
+        composer install \
+    ; fi
 
 RUN rm -f public/storage \
     && php artisan storage:link

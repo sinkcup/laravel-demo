@@ -1,0 +1,65 @@
+#!/bin/bash
+
+set -- $(getopt s: "$@")
+speed="up"
+while [ -n "$1" ]; do
+    case "$1" in
+        -s) speed="$2"
+            echo "speed $speed"
+            shift ;;
+        --) shift
+            break ;;
+    esac
+    shift
+done
+
+if [[ "$speed" = "keep" ]]; then
+    exit 0
+fi
+
+check_jq() {
+    if [[ -z $(command -v jq) ]]; then
+        echo "ERROR: Command 'jq' not found"
+        exit 1
+    fi
+}
+
+set_apt() {
+    find /etc/apt/ -name "*.list" -print0 | xargs -0 sed -i 's/[a-z]\+.debian.org/mirrors.cloud.tencent.com/g'
+}
+
+set_composer() {
+    check_jq
+    if [[ "$speed" = "up" ]]; then
+        url_suffix='.dist.mirrors[0].url="https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%"'
+        jq '."packages"[]'"$url_suffix" composer.lock \
+        | jq '."packages"[].dist.mirrors[0].preferred=true' \
+        | jq '."packages-dev"[]'"$url_suffix" \
+        | jq --indent 4 '."packages-dev"[].dist.mirrors[0].preferred=true' > composer.lock.tmp
+    else
+        jq 'del(."packages"[].dist.mirrors)' composer.lock \
+        | jq --indent 4 'del(."packages-dev"[].dist.mirrors)' > composer.lock.tmp
+    fi
+    mv composer.lock.tmp composer.lock
+}
+
+set_composer_setup() {
+    sed -i 's/getcomposer\.org/install\.phpcomposer\.com/g' ./composer-setup.php
+    sed -i 's/\/versions/\/versions\.json/g' ./composer-setup.php
+    # TODO waiting for aliyun to fix 404 https://weibo.com/3969284293/IjcIl3hs5
+    #sed -i 's/getcomposer\.org/mirrors\.aliyun\.com\/composer/g' ./composer-setup.php
+}
+
+set_nodejs_setup() {
+    sed -i "s/deb\.nodesource\.com\/\${NODEREPO}/mirrors\.tuna\.tsinghua\.edu\.cn\/nodesource\/deb\${SCRSUFFIX}/g" ./nodejs_setup.sh
+}
+
+for i in "$@"
+do
+    case $i in
+        apt) set_apt;;
+        composer) set_composer;;
+        composer_setup) set_composer_setup;;
+        nodejs_setup) set_nodejs_setup;;
+    esac
+done

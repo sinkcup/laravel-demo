@@ -12,5 +12,6 @@ _ide_helper.php
 clover.xml
 Homestead.json
 Homestead.yaml
+junit.xml
 npm-debug.log
 yarn-error.log

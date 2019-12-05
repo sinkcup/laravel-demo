@@ -10,6 +10,8 @@
 
 This project provides CI, Docker, Lint, Tests for Laravel.
 
+*Read this in these languages: [English](README.md), [汉字](README.zh-CN.md).*
+
 ## Docker
 
 This project build two Dockers for production and development.
@@ -119,7 +121,7 @@ Name | Value
 DOCKER_USER | optional, Docker username, set this if you want to use private docker image
 DOCKER_PASSWORD | optional, Docker password
 DOCKER_SERVER | optional, Docker server
-DOCKER_PATH_PREFIX | optional, Docker server
+DOCKER_PATH_PREFIX | optional, Docker path prefix
 SPEED | optional, change mirror to speed up docker build, values: up/down/keep
 
 ![CODING CI Environment Variables](https://user-images.githubusercontent.com/4971414/70202174-d9155600-1753-11ea-9396-b8fd5f15db47.png)

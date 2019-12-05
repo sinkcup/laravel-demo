@@ -105,12 +105,9 @@ docker run --rm --name laravel_demo_queue -e DB_CONNECTION=sqlite -e CONTAINER_R
 
 名称 | 值
 -----|--------------
-APP_ENV | testing
-APP_KEY	| 通过运行 `php artisan key:generate --show` 来生成
-CODECOV_TOKEN | 注册 [codecov.io](https://codecov.io/) 来获得
-DB_PASSWORD | Passw0rd!
+CODECOV_TOKEN | 可选，注册 [codecov.io](https://codecov.io/) 来获得
 
-![CircleCI Environment Variables](https://user-images.githubusercontent.com/4971414/64674927-80ac2080-d4a4-11e9-8448-6e9f4a67a128.png)
+![CircleCI Environment Variables](https://user-images.githubusercontent.com/4971414/70208756-539ca080-1769-11ea-95f8-de50a01eecbd.png)
 
 ### Jenkins\([免费的 CODING.net CI](https://coding.net/products/ci?cps_source=PIevZ6Jr)\)
 
@@ -118,10 +115,10 @@ DB_PASSWORD | Passw0rd!
 
 名称 | 值
 -----|--------------
+SPEED | 可选，修改源地址用来加速构建，取值：up/down/keep
 DOCKER_USER | 可选，Docker 用户名，如果要使用私有镜像才要配置此项
 DOCKER_PASSWORD | 可选，Docker 密码
 DOCKER_SERVER | 可选，Docker 服务器地址
 DOCKER_PATH_PREFIX | 可选，Docker 路径前缀
-SPEED | 可选，修改源地址用来加速构建，取值：up/down/keep
 
-![CODING CI 环境变量](https://user-images.githubusercontent.com/4971414/70202174-d9155600-1753-11ea-9396-b8fd5f15db47.png)
+![CODING CI 环境变量](https://user-images.githubusercontent.com/4971414/70208810-7c249a80-1769-11ea-979f-45a56e79a126.png)

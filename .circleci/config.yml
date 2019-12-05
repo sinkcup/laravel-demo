@@ -48,7 +48,12 @@ jobs: # a collection of steps
           key: node-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
-      - run: php artisan migrate --force
+      - run:
+          name: Update Define Environment Variable at Runtime
+          command: |
+            echo 'export APP_ENV="testing"' >> $BASH_ENV
+            echo 'export APP_KEY="base64:tbgOBtYci7i7cdx5RiFE3KZzUkRtJfbU3lbj5uPdL8U="' >> $BASH_ENV
+            echo 'export DB_PASSWORD="Passw0rd!"' >> $BASH_ENV
       - run:
           command: |
             ./lint.sh

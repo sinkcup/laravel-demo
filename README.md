@@ -14,9 +14,23 @@ This project provides CI, Docker, Lint, Tests for Laravel.
 
 This project build two Dockers for production and development.
 
+build steps:
+
+```
+# default production
+docker build -t laravel-demo:6 .
+
+# development
+docker build -t laravel-demo:6-dev --build-arg APP_ENV=local .
+
+# speed up docker build by change apt, composer, npm mirror
+docker build -t laravel-demo:6-dev --build-arg APP_ENV=local --build-arg SPEED=up .
+```
+
+build result on [hub.docker.com](https://hub.docker.com/r/sinkcup/laravel-demo):
+
 ```
 docker pull sinkcup/laravel-demo:6
-docker pull sinkcup/laravel-demo:6-dev
 ```
 
 It has 3 roles, you can switch by `CONTAINER_ROLE: app/scheduler/queue`:
@@ -59,19 +73,6 @@ the best way is:
 },
 ```
 
-## CircleCI
-
-Environment Variables:
-
-Name | Value
------|--------------
-APP_ENV | testing
-APP_KEY	| generate by `php artisan key:generate --show`
-CODECOV_TOKEN | get from [codecov.io](https://codecov.io/)
-DB_PASSWORD | Passw0rd!
-
-![CircleCI Environment Variables](https://user-images.githubusercontent.com/4971414/64674927-80ac2080-d4a4-11e9-8448-6e9f4a67a128.png)
-
 ## Lint
 
 This project use [PSR12 coding standard](https://www.php-fig.org/psr/psr-12/), you can find rules in `phpcs.xml`.
@@ -84,10 +85,41 @@ If there are some format errors, you could try to fix automatically:
 ./lint.sh --fix
 ```
 
-You can find `lint.sh` run in `.circleci/config.yml`, so it will check coding standard when codes pushed or a PR created.
+You can find `lint.sh` run in `.circleci/config.yml` and `Jenkinsfile`, so it will check coding standard when codes pushed or a PR created.
 
 ## Tests
 
-When you run `./phpunit.sh`, it will save coverage report to `clover.xml`.
+When you run `./phpunit.sh`, it will generate:
 
-You can register for a TOKEN on [codecov.io](https://codecov.io/), so CI can upload the report to it.
+- `clover.xml`: coverage report in Clover XML format, you can register for a TOKEN on [codecov.io](https://codecov.io/), so CI can upload the report to it.
+- `storage/app/public/coverage`: coverage report in HTML format, you can access by [http://laravel-demo.localhost/storage/coverage/](http://laravel-demo.localhost/storage/coverage/)
+- `junit.xml`: test execution in JUnit XML format, it can be collected by Jenkins.
+
+## Continuous integration(CI)
+
+### CircleCI
+
+Environment Variables:
+
+Name | Value
+-----|--------------
+APP_ENV | testing
+APP_KEY	| generate by `php artisan key:generate --show`
+CODECOV_TOKEN | get from [codecov.io](https://codecov.io/)
+DB_PASSWORD | Passw0rd!
+
+![CircleCI Environment Variables](https://user-images.githubusercontent.com/4971414/64674927-80ac2080-d4a4-11e9-8448-6e9f4a67a128.png)
+
+### Jenkins\([CODING.net free CI](https://coding.net/products/ci?cps_source=PIevZ6Jr)\)
+
+Environment Variables:
+
+Name | Value
+-----|--------------
+DOCKER_USER | optional, Docker username, set this if you want to use private docker image
+DOCKER_PASSWORD | optional, Docker password
+DOCKER_SERVER | optional, Docker server
+DOCKER_PATH_PREFIX | optional, Docker server
+SPEED | optional, change mirror to speed up docker build, values: up/down/keep
+
+![CODING CI Environment Variables](https://user-images.githubusercontent.com/4971414/70202174-d9155600-1753-11ea-9396-b8fd5f15db47.png)

@@ -66,4 +66,16 @@ class ExampleTest extends TestCase
         // NOTICE: laravel RedisManager has prefix
         $this->assertEquals($user->toArray(), $redis->hGetAll(config('database.redis.options.prefix') . $key));
     }
+
+    public function testLocale()
+    {
+        $locale = 'zh_CN';
+        // https://www.php.net/manual/en/function.gettext.php
+        setlocale(LC_ALL, $locale);
+        $this->assertFalse(\App::isLocale($locale));
+
+        // https://laravel.com/docs/6.x/localization#configuring-the-locale
+        \App::setLocale($locale);
+        $this->assertTrue(\App::isLocale($locale));
+    }
 }

@@ -8,9 +8,9 @@ node {
     sh 'docker network create bridge1'
     sh(script:'docker run --net bridge1 --name mysql -d -e "MYSQL_ROOT_PASSWORD=my-secret-pw" -e "MYSQL_DATABASE=test" mysql:5.7', returnStdout: true)
     sh(script:'docker run --net bridge1 --name redis -d redis:5', returnStdout: true)
-    sh "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD codes-farm-docker.pkg.coding.net"
+    sh "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD $DOCKER_SERVER"
     md5 = sh(script: "md5sum Dockerfile | awk '{print \$1}'", returnStdout: true).trim()
-    imageAndTag = "codes-farm-docker.pkg.coding.net/laravel-demo/laravel-docker/laravel-demo:dev-${md5}"
+    imageAndTag = "${DOCKER_SERVER}${DOCKER_PATH_PREFIX}laravel-demo:dev-${md5}"
     dockerNotExists = sh(script: "DOCKER_CLI_EXPERIMENTAL=enabled docker manifest inspect $imageAndTag > /dev/null", returnStatus: true)
     def testImage = null
     if (dockerNotExists) {

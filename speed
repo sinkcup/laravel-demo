@@ -44,10 +44,7 @@ set_composer() {
 }
 
 set_composer_setup() {
-    sed -i 's/getcomposer\.org/install\.phpcomposer\.com/g' ./composer-setup.php
-    sed -i 's/\/versions/\/versions\.json/g' ./composer-setup.php
-    # TODO waiting for aliyun to fix 404 https://weibo.com/3969284293/IjcIl3hs5
-    #sed -i 's/getcomposer\.org/mirrors\.aliyun\.com\/composer/g' ./composer-setup.php
+    sed -i 's/getcomposer\.org/mirrors\.aliyun\.com\/composer/g' ./composer-setup.php
 }
 
 set_nodejs_setup() {

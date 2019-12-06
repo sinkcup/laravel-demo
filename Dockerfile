@@ -71,7 +71,8 @@ RUN if [ "$APP_ENV" = "production" ]; then \
     ; fi
 
 RUN rm -f public/storage \
-    && php artisan storage:link
+    && php artisan storage:link \
+    && touch database/database.sqlite
 
 COPY docker/ /
 RUN a2enmod rewrite headers \

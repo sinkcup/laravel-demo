@@ -37,16 +37,21 @@ node {
             echo 'test done.'
         }
     }
-    if(env.BRANCH_NAME == '6.x') {
-        stage('deploy') {
-            echo 'deploying...'
-            withCredentials([sshUserPrivateKey(credentialsId: "${WEB_SERVER_CREDENTIALS_ID}", keyFileVariable: 'id_rsa')]) {
-                sh(script: "ssh -i ${id_rsa} ${WEB_SERVER_USER}@${WEB_SERVER_HOST} \"" +
-                    "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD $DOCKER_SERVER" +
-                    "&& docker pull ${imageAndTag}" +
-                    "\"", returnStdout: true)
-            }
-            echo 'deploy done.'
+    stage('deploy') {
+        if(env.BRANCH_NAME != '6.x') {
+            echo 'do nothing'
+            return
         }
+        echo 'deploying...'
+        withCredentials([sshUserPrivateKey(credentialsId: "${WEB_SERVER_CREDENTIALS_ID}", keyFileVariable: 'id_rsa')]) {
+            sh(script: "ssh -i ${id_rsa} ${WEB_SERVER_USER}@${WEB_SERVER_HOST} \"" +
+                "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD $DOCKER_SERVER" +
+                "&& docker pull ${imageAndTag}" +
+                "&& docker stop web" +
+                "&& docker rm web" +
+                "&& docker run --name web -d -e 'DB_CONNECTION=sqlite' -e 'APP_KEY=base64:tbgOBtYci7i7cdx5RiFE3KZzUkRtJfbU3lbj5uPdL8U=' ${imageAndTag}" +
+                "\"", returnStdout: true)
+        }
+        echo 'deploy done.'
     }
 }

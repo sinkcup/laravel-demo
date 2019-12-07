@@ -21,14 +21,11 @@ node {
     md5 = sh(script: "md5sum Dockerfile | awk '{print \$1}'", returnStdout: true).trim()
     imageName = "${DOCKER_SERVER}${DOCKER_PATH}:dev-${md5}"
     dockerNotExists = sh(script: "DOCKER_CLI_EXPERIMENTAL=enabled docker manifest inspect $imageName > /dev/null", returnStatus: true)
-    def testImage = null
     if (dockerNotExists) {
-        testImage = docker.build(imageName, "--build-arg APP_ENV=testing --build-arg SPEED=$SPEED ./")
-        sh "docker push $imageName"
-    } else {
-        testImage = docker.image(imageName)
+        docker.build(imageName, "--build-arg APP_ENV=testing --build-arg SPEED=$SPEED ./")
+        docker.push(imageName)
     }
-    testImage.inside("--net bridge1 -v \"${codePath}:/var/www/laravel\" -e 'APP_ENV=testing' -e 'DB_DATABASE=test'" +
+    docker.image(imageName).inside("--net bridge1 -v \"${codePath}:/var/www/laravel\" -e 'APP_ENV=testing' -e 'DB_DATABASE=test'" +
        " -e 'DB_USERNAME=root' -e 'DB_PASSWORD=my-secret-pw' -e 'DB_HOST=mysql' -e 'REDIS_HOST=redis'" +
         " -e 'APP_KEY=base64:tbgOBtYci7i7cdx5RiFE3KZzUkRtJfbU3lbj5uPdL8U='") {
         stage('prepare') {
@@ -54,7 +51,7 @@ node {
         echo 'build docker for production'
         imageName = "${DOCKER_SERVER}${DOCKER_PATH}:latest"
         docker.build(imageName, "--build-arg APP_ENV=production --build-arg SPEED=$SPEED ./")
-        docker.withRegistry("https://${DOCKER_SERVER}", $CODING_ARTIFACTS_CREDENTIALS_ID) {
+        docker.withRegistry("https://${DOCKER_SERVER}", CODING_ARTIFACTS_CREDENTIALS_ID) {
             docker.image(imageName).push()
         }
 
@@ -65,11 +62,12 @@ node {
         }
         withCredentials([sshUserPrivateKey(credentialsId: "${WEB_SERVER_CREDENTIALS_ID}", keyFileVariable: 'id_rsa')]) {
             remote.identityFile = id_rsa
-            remote.host = $WEB_SERVER_HOST
-            remote.user = $WEB_SERVER_USER
+            remote.host = WEB_SERVER_HOST
+            remote.user = WEB_SERVER_USER
             sshCommand remote: remote, command: "docker login -u ${dockerUser} -p ${dockerPassword} $DOCKER_SERVER"
             sshCommand remote: remote, command: "docker pull ${imageName}"
-            sshCommand remote: remote, command: "docker stop web && docker rm web"
+            sshCommand remote: remote, command: "docker stop web | true"
+            sshCommand remote: remote, command: "docker rm web | true"
             sshCommand remote: remote, command: "docker run --name web -d -e 'DB_CONNECTION=sqlite' -e 'APP_KEY=${APP_KEY}' ${imageName}"
         }
         echo 'deploy done.'

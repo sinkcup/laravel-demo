@@ -22,6 +22,9 @@ node {
     imageName = "${DOCKER_SERVER}${DOCKER_PATH}:dev-${md5}"
     dockerNotExists = sh(script: "DOCKER_CLI_EXPERIMENTAL=enabled docker manifest inspect $imageName > /dev/null", returnStatus: true)
     if (dockerNotExists) {
+        if(SPEED = 'up') {
+            ./speed -s $SPEED docker_composer_setup docker_nodejs_setup
+        }
         docker.build(imageName, "--build-arg APP_ENV=testing --build-arg SPEED=$SPEED ./")
         docker.push(imageName)
     }

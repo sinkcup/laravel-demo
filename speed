@@ -44,11 +44,19 @@ set_composer() {
 }
 
 set_composer_setup() {
-    sed -i 's/getcomposer\.org/mirrors\.aliyun\.com\/composer/g' ./composer-setup.php
+    sed -i "s|getcomposer.org'|getcomposer.org.mirrors.china-speed.org.cn'|g" ./composer-setup.php
+}
+
+set_docker_composer_setup() {
+    sed -i "s|https://getcomposer.org/|http://getcomposer.org.mirrors.china-speed.org.cn/|g" ./Dockerfile
 }
 
 set_nodejs_setup() {
-    sed -i "s/deb\.nodesource\.com\/\${NODEREPO}/mirrors\.tuna\.tsinghua\.edu\.cn\/nodesource\/deb\${SCRSUFFIX}/g" ./nodejs_setup.sh
+    sed -i "s|https://deb.nodesource.com/|http://deb.nodesource.com.mirrors.china-speed.org.cn/|g" ./nodejs-setup.sh
+}
+
+set_docker_nodejs_setup() {
+    sed -i "s|https://deb.nodesource.com/|http://deb.nodesource.com.mirrors.china-speed.org.cn/|g" ./Dockerfile
 }
 
 for i in "$@"
@@ -57,6 +65,8 @@ do
         apt) set_apt;;
         composer) set_composer;;
         composer_setup) set_composer_setup;;
+	docker_composer_setup) set_docker_composer_setup;;
         nodejs_setup) set_nodejs_setup;;
+	docker_nodejs_setup) set_docker_nodejs_setup;;
     esac
 done

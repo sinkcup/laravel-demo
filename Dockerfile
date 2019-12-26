@@ -7,13 +7,9 @@ WORKDIR /var/www/laravel
 COPY speed /var/www/laravel/
 RUN ./speed -s $SPEED apt
 
-RUN curl -sS https://getcomposer.org/installer -o composer-setup.php \
-    && ./speed -s $SPEED composer_setup \
-    && php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-RUN curl -sL https://deb.nodesource.com/setup_12.x -o nodejs_setup.sh \
-    && ./speed -s $SPEED nodejs_setup \
-    && bash ./nodejs_setup.sh
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
 
 RUN apt-get update \
     && apt-get install -y \

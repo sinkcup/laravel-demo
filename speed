@@ -25,7 +25,7 @@ check_jq() {
 }
 
 set_apt() {
-    find /etc/apt/ -name "*.list" -print0 | xargs -0 sed -i 's/[a-z]\+.debian.org/mirrors.cloud.tencent.com/g'
+    find /etc/apt/ -name "*.list" -print0 | xargs -0 sed -i 's/[a-z]\+.debian.org/mirrors.aliyun.com/g'
 }
 
 set_composer() {

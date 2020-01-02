@@ -1,10 +1,3 @@
-def remote = [:]
-remote.name = 'web-server'
-remote.allowAnyHosts = true
-
-dockerUser = ""
-dockerPassword = ""
-
 node {
     checkout([
         $class: 'GitSCM',
@@ -22,11 +15,11 @@ node {
     imageName = "${DOCKER_SERVER}${DOCKER_PATH}:dev-${md5}"
     dockerNotExists = sh(script: "DOCKER_CLI_EXPERIMENTAL=enabled docker manifest inspect $imageName > /dev/null", returnStatus: true)
     if (dockerNotExists) {
-        if(SPEED = 'up') {
-            ./speed -s $SPEED docker_composer_setup docker_nodejs_setup
+        if(SPEED == 'up') {
+            sh './speed -s $SPEED docker_composer_setup docker_nodejs_setup'
         }
         docker.build(imageName, "--build-arg APP_ENV=testing --build-arg SPEED=$SPEED ./")
-        docker.push(imageName)
+        docker.image(imageName).push()
     }
     docker.image(imageName).inside("--net bridge1 -v \"${codePath}:/var/www/laravel\" -e 'APP_ENV=testing' -e 'DB_DATABASE=test'" +
        " -e 'DB_USERNAME=root' -e 'DB_PASSWORD=my-secret-pw' -e 'DB_HOST=mysql' -e 'REDIS_HOST=redis'" +
@@ -59,14 +52,20 @@ node {
         }
 
         echo 'deploy docker image to server'
+        dockerUser = ""
+        dockerPassword = ""
         withCredentials([usernamePassword(credentialsId: env.CODING_ARTIFACTS_CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
             dockerUser = DOCKER_USER
             dockerPassword = DOCKER_PASSWORD
         }
-        withCredentials([sshUserPrivateKey(credentialsId: "${WEB_SERVER_CREDENTIALS_ID}", keyFileVariable: 'id_rsa')]) {
+        def remote = [:]
+        remote.name = 'web-server'
+        remote.allowAnyHosts = true
+        remote.user = 'ubuntu'
+        withCredentials([sshUserPrivateKey(credentialsId: WEB_SERVER_CREDENTIALS_ID, keyFileVariable: 'id_rsa')]) {
             remote.identityFile = id_rsa
             remote.host = WEB_SERVER_HOST
-            remote.user = WEB_SERVER_USER
+            sshCommand remote: remote, command: "ls /"
             sshCommand remote: remote, command: "docker login -u ${dockerUser} -p ${dockerPassword} $DOCKER_SERVER"
             sshCommand remote: remote, command: "docker pull ${imageName}"
             sshCommand remote: remote, command: "docker stop web | true"

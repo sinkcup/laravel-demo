@@ -24,9 +24,6 @@ if [[ "$OSTYPE" == "darwin"* ]] && [[ $(command -v getopt) == "/usr/bin/getopt" 
         echo "----------------------------------------------------------------------"
         echo "     TRY:"
         echo "     brew install gnu-getopt"
-        echo "     brew link --force gnu-getopt"
-        echo "     echo 'export PATH=\"/usr/local/opt/gnu-getopt/bin:\$PATH\"' >> ~/.bash_profile"
-        echo "     source ~/.bash_profile"
         echo "----------------------------------------------------------------------"
         exit 1
 fi

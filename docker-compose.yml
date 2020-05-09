@@ -1,10 +1,7 @@
 version: '2.1'
 services:
   web:
-    environment:
-      - CACHE_DRIVER=redis
-      - DB_CONNECTION=mysql
-      - APP_KEY=
+    env_file: .env
     build: .
     image: ${IMAGE:-laravel-demo:dev}
     ports:

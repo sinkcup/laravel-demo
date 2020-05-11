@@ -4,6 +4,7 @@
 [![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/sinkcup/laravel-demo.svg)](https://hub.docker.com/r/sinkcup/laravel-demo)
 [![codecov](https://codecov.io/gh/sinkcup/laravel-demo/branch/6.x/graph/badge.svg)](https://codecov.io/gh/sinkcup/laravel-demo)
 ![coverage](https://raw.githubusercontent.com/sinkcup/laravel-demo/6.x/coverage.png)
+[![SwaggerHub](https://img.shields.io/badge/swagger-hub-brightgreen)](https://app.swaggerhub.com/apis-docs/sinkcup/laravel-demo/1.0.0)
 
 [![CODING CI（Jenkins）构建状态](https://codes-farm.coding.net/badges/laravel-demo/job/88282/6.x/build.svg)](https://codes-farm.coding.net/p/laravel-demo/ci/job)
 [![CODING 测试覆盖率](https://codes-farm.coding.net/p/laravel-demo/git/raw/6.x/coverage.png)](https://m6zlsd.coding-pages.com/coverage/)
@@ -89,12 +90,36 @@ If there are some format errors, you could try to fix automatically:
 
 You can find `lint.sh` run in `.circleci/config.yml` and `Jenkinsfile`, so it will check coding standard when codes pushed or a PR created.
 
+## OpenAPI 3 Docs(Swagger)
+
+This project generate OpenAPI 3 Docs from code.
+
+local:
+
+```shell script
+php artisan serve
+google-chrome http://127.0.0.1:8000/api/documentation
+```
+
+online(swaggerhub.com):
+
+```shell script
+php artisan l5-swagger:generate
+curl -X POST "https://api.swaggerhub.com/apis/sinkcup/laravel-demo?openapi=3.0.0" \
+     -H "Authorization: your-api-key" \
+     -H "Content-Type: application/json" \
+     --data-binary @storage/api-docs/api-docs.json
+google-chrome https://app.swaggerhub.com/apis-docs/sinkcup/laravel-demo/1.0.0
+```
+
+docs: https://swagger.io/blog/api-development/integrating-with-the-swaggerhub-api/
+
 ## Tests
 
 When you run `./phpunit.sh`, it will generate:
 
 - `clover.xml`: coverage report in Clover XML format, you can register for a TOKEN on [codecov.io](https://codecov.io/), so CI can upload the report to it.
-- `storage/app/public/coverage`: coverage report in HTML format, you can access by [http://laravel-demo.localhost/storage/coverage/](http://laravel-demo.localhost/storage/coverage/)
+- `storage/app/public/coverage`: coverage report in HTML format, you can access by [http://localhost:8000/storage/coverage/](http://laravel-demo.localhost/storage/coverage/)
 - `junit.xml`: test execution in JUnit XML format, it can be collected by Jenkins.
 
 ## Continuous integration(CI)

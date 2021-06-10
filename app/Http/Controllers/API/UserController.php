@@ -38,7 +38,7 @@ class UserController extends Controller
      *             type="object",
      *             @OA\Property(property="total", type="integer", example=19),
      *             @OA\Property(property="per_page", type="integer", example=15),
-     *             @OA\Property(property="data", @OA\Items(ref="#/components/schemas/User"))
+     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/User"))
      *         ),
      *     ),
      *     @OA\Response(response=422, description="The given data was invalid."),

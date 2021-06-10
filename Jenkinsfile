@@ -1,77 +1,72 @@
-node {
-    checkout([
-        $class: 'GitSCM',
-        branches: [[name: env.GIT_BUILD_REF]],
-        userRemoteConfigs: [[url: env.GIT_REPO_URL, credentialsId: env.CREDENTIALS_ID]]
-    ])
-    codePath = sh(script: 'pwd', returnStdout: true).trim()
-    sh 'docker network create bridge1'
-    sh(script:'docker run --net bridge1 --name mysql -d -e "MYSQL_ROOT_PASSWORD=my-secret-pw" -e "MYSQL_DATABASE=test" mysql:5.7', returnStdout: true)
-    sh(script:'docker run --net bridge1 --name redis -d redis:5', returnStdout: true)
-
-    // docker build image for testing
-    sh "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD $DOCKER_SERVER"
-    md5 = sh(script: "md5sum Dockerfile | awk '{print \$1}'", returnStdout: true).trim()
-    imageName = "${DOCKER_SERVER}${DOCKER_PATH}:dev-${md5}"
-    dockerNotExists = sh(script: "DOCKER_CLI_EXPERIMENTAL=enabled docker manifest inspect $imageName > /dev/null", returnStatus: true)
-    if (dockerNotExists) {
-        if(SPEED == 'up') {
-            sh './speed -s $SPEED docker_composer_setup docker_nodejs_setup'
-        }
-        docker.build(imageName, "--build-arg APP_ENV=testing --build-arg SPEED=$SPEED ./")
-        docker.image(imageName).push()
+pipeline {
+  agent {
+    docker {
+      image 'laravelfans/laravel:6'
+      reuseNode 'true'
+      args '--net=host -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker'
     }
-    docker.image(imageName).inside("--net bridge1 -v \"${codePath}:/var/www/laravel\" -e 'APP_ENV=testing' -e 'DB_DATABASE=test'" +
-       " -e 'DB_USERNAME=root' -e 'DB_PASSWORD=my-secret-pw' -e 'DB_HOST=mysql' -e 'REDIS_HOST=redis'" +
-        " -e 'APP_KEY=base64:tbgOBtYci7i7cdx5RiFE3KZzUkRtJfbU3lbj5uPdL8U='") {
-        stage('prepare') {
-            echo 'preparing...'
-            sh 'env'
-            sh "bash ./speed -s $SPEED composer"
-            sh 'composer install'
-            echo 'prepare done.'
-        }
-        stage('test') {
-            echo 'testing...'
-            sh './lint.sh'
-            sh './phpunit.sh'
-            junit 'junit.xml'
-            echo 'test done.'
-        }
+  }
+  stages {
+    stage("检出") {
+      steps {
+        checkout([
+          $class: 'GitSCM',
+          branches: [[name: GIT_BUILD_REF]],
+          userRemoteConfigs: [[
+            url: GIT_REPO_URL,
+            credentialsId: CREDENTIALS_ID
+        ]]])
+      }
     }
-    stage('deploy') {
-        if(GIT_LOCAL_BRANCH != '6.x') {
-            echo 'do nothing.'
-            return
-        }
-        echo 'build docker for production'
-        imageName = "${DOCKER_SERVER}${DOCKER_PATH}:latest"
-        docker.build(imageName, "--build-arg APP_ENV=production --build-arg SPEED=$SPEED ./")
-        docker.withRegistry("https://${DOCKER_SERVER}", CODING_ARTIFACTS_CREDENTIALS_ID) {
-            docker.image(imageName).push()
-        }
-
-        echo 'deploy docker image to server'
-        dockerUser = ""
-        dockerPassword = ""
-        withCredentials([usernamePassword(credentialsId: env.CODING_ARTIFACTS_CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
-            dockerUser = DOCKER_USER
-            dockerPassword = DOCKER_PASSWORD
-        }
-        def remote = [:]
-        remote.name = 'web-server'
-        remote.allowAnyHosts = true
-        remote.user = 'ubuntu'
-        withCredentials([sshUserPrivateKey(credentialsId: WEB_SERVER_CREDENTIALS_ID, keyFileVariable: 'id_rsa')]) {
-            remote.identityFile = id_rsa
-            remote.host = WEB_SERVER_HOST
-            sshCommand remote: remote, command: "ls /"
-            sshCommand remote: remote, command: "docker login -u ${dockerUser} -p ${dockerPassword} $DOCKER_SERVER"
-            sshCommand remote: remote, command: "docker pull ${imageName}"
-            sshCommand remote: remote, command: "docker stop web | true"
-            sshCommand remote: remote, command: "docker rm web | true"
-            sshCommand remote: remote, command: "docker run --name web -d -e 'DB_CONNECTION=sqlite' -e 'APP_KEY=${APP_KEY}' ${imageName}"
-        }
-        echo 'deploy done.'
+    stage('准备依赖') {
+      steps {
+        sh 'pecl install xdebug'
+        sh 'docker-php-ext-enable xdebug'
+        sh 'composer install'
+        sh(script:'docker run -p 6379:6379 -d redis:5',   returnStdout: true)
+        sh 'docker ps'
+      }
     }
+    stage('单元测试') {
+      post {
+        always {
+          junit 'storage/test-results/junit.xml'
+        }
+        success {
+          codingHtmlReport(name: '测试覆盖率报告', path: 'storage/reports/tests/')
+        }
+      }
+      steps {
+        sh 'touch database/database.sqlite'
+        sh 'XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-html storage/reports/tests/ --log-junit storage/test-results/junit.xml --coverage-text tests/'
+      }
+    }
+    stage('生成 API 文档') {
+      steps {
+        sh 'php artisan l5-swagger:generate'
+        codingReleaseApiDoc(apiDocId: '1', apiDocType: 'specificFile', resultFile: 'storage/api-docs/api-docs.json')
+      }
+    }
+    stage('构建 Docker 镜像') {
+      steps {
+        script {
+          if (env.TAG_NAME ==~ /.*/ ) {
+            DOCKER_IMAGE_VERSION = "${env.TAG_NAME}"
+          } else if (env.MR_SOURCE_BRANCH ==~ /.*/ ) {
+            DOCKER_IMAGE_VERSION = "mr-${env.MR_RESOURCE_ID}-${env.GIT_COMMIT_SHORT}"
+          } else {
+            DOCKER_IMAGE_VERSION = "${env.BRANCH_NAME.replace('/', '-')}-${env.GIT_COMMIT_SHORT}"
+          }
+          // 本项目内的制品库已内置环境变量 CODING_ARTIFACTS_CREDENTIALS_ID，无需手动设置
+          docker.withRegistry("https://${env.CCI_CURRENT_TEAM}-docker.pkg.coding.net", "${env.CODING_ARTIFACTS_CREDENTIALS_ID}") {
+            docker.build("${CODING_DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION}").push()
+          }
+        }
+      }
+    }
+  }
+  environment {
+    CODING_DOCKER_REG_HOST = "${CCI_CURRENT_TEAM}-docker.pkg.${CCI_CURRENT_DOMAIN}"
+    CODING_DOCKER_IMAGE_NAME = "${env.PROJECT_NAME.toLowerCase()}/laravel-docker/laravel-demo"
+  }
 }

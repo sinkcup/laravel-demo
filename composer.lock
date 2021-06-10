@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8e6a5061494031b010b0d34473d55c03",
+    "content-hash": "e35796597b3975cf7274442265553f43",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -5460,6 +5460,56 @@
                 "source": "https://github.com/justinrainbow/json-schema/tree/5.2.10"
             },
             "time": "2020-05-27T16:41:55+00:00"
+        },
+        {
+            "name": "laravel-fans/docker",
+            "version": "0.3.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel-fans/laravel-docker.git",
+                "reference": "200cfc4130845babee90fb09b9a03dc2e9742f43"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel-fans/laravel-docker/zipball/200cfc4130845babee90fb09b9a03dc2e9742f43",
+                "reference": "200cfc4130845babee90fb09b9a03dc2e9742f43",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": ">=v5.5.50"
+            },
+            "require-dev": {
+                "orchestra/testbench": ">=v3.5.6"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "LaravelFans\\Docker\\DockerServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LaravelFans\\Docker\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "sinkcup",
+                    "email": "sinkcup@gmail.com"
+                }
+            ],
+            "description": "Full Laravel production environment for Docker",
+            "support": {
+                "issues": "https://github.com/laravel-fans/laravel-docker/issues",
+                "source": "https://github.com/laravel-fans/laravel-docker/tree/0.3.3"
+            },
+            "time": "2021-04-28T13:38:23+00:00"
         },
         {
             "name": "mockery/mockery",

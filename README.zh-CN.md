@@ -5,8 +5,8 @@
 [![codecov](https://codecov.io/gh/sinkcup/laravel-demo/branch/6.x/graph/badge.svg)](https://codecov.io/gh/sinkcup/laravel-demo)
 ![coverage](https://raw.githubusercontent.com/sinkcup/laravel-demo/6.x/coverage.png)
 
-[![CODING CI（Jenkins）构建状态](https://codes-farm.coding.net/badges/laravel-demo/job/88282/6.x/build.svg)](https://codes-farm.coding.net/p/laravel-demo/ci/job)
-[![CODING 测试覆盖率](https://codes-farm.coding.net/p/laravel-demo/git/raw/6.x/coverage.png)](https://m6zlsd.coding-pages.com/coverage/)
+[![CODING CI（Jenkins）构建状态](https://codes-farm.coding.net/badges/laravel-demo/job/88282/6.x/build.svg)](https://codes-farm.coding.net/p/laravel-demo/ci/job?id=88282)
+[![CODING 测试覆盖率](https://codes-farm.coding.net/p/laravel-demo/git/raw/6.x/coverage.png)](https://80d543d6-1d38-46ef-9339-b584180ce012.cci-report.coding.io/)
 
 本项目演示 Laravel CI、Docker、Lint、Tests。
 

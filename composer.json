@@ -62,7 +62,8 @@
             "if (php artisan | grep 'ide-helper:meta'); then php artisan ide-helper:meta; fi"
         ],
         "post-root-package-install": [
-            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "@php -r \"file_exists('.env.testing') || copy('.env.testing.example', '.env.testing');\""
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"

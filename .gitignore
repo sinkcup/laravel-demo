@@ -6,6 +6,7 @@
 /storage/api-docs/
 /vendor
 .env
+.env.testing
 .env.backup
 .phpstorm.meta.php
 .phpunit.result.cache

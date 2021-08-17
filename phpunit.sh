@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
 set -e
+prepare_file='prepare_phpunit.sh'
+if [[ -f $prepare_file ]]; then
+  #shellcheck source=/dev/null
+  . $prepare_file
+fi
+
 STARTED_AT=$(date +%s)
 
-php artisan migrate:fresh
-php artisan migrate:refresh
+php artisan migrate:fresh --env=testing
+php artisan migrate:refresh --env=testing
 
 ./vendor/bin/phpunit --stop-on-defect --coverage-text tests/
 

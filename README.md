@@ -27,3 +27,17 @@ php artisan lint:code --fix
 git add .
 git commit -m 'style: clear code'
 ```
+
+3、引入 Docker
+
+```shell
+composer require --dev laravel-fans/docker
+
+php artisan docker:publish
+docker build -t laravel-demo:debug .
+docker run -p 8000:80 -it laravel-demo:debug
+open http://localhost:8000
+
+git add .
+git commit -m 'build: docker'
+```

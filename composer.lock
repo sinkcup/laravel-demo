@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d03cd15721a0190c69387ccaa427985b",
+    "content-hash": "9563ff990cb7b0f7fdb1820c724d3d68",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -5958,6 +5958,56 @@
                 "source": "https://github.com/hamcrest/hamcrest-php/tree/v2.0.1"
             },
             "time": "2020-07-09T08:09:16+00:00"
+        },
+        {
+            "name": "laravel-fans/docker",
+            "version": "0.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel-fans/laravel-docker.git",
+                "reference": "cc52368f50c7ccba42a70330adad9f697af76f20"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel-fans/laravel-docker/zipball/cc52368f50c7ccba42a70330adad9f697af76f20",
+                "reference": "cc52368f50c7ccba42a70330adad9f697af76f20",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": ">=v5.5.50"
+            },
+            "require-dev": {
+                "orchestra/testbench": ">=v3.5.6"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "LaravelFans\\Docker\\DockerServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LaravelFans\\Docker\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "sinkcup",
+                    "email": "sinkcup@gmail.com"
+                }
+            ],
+            "description": "Full Laravel production environment for Docker",
+            "support": {
+                "issues": "https://github.com/laravel-fans/laravel-docker/issues",
+                "source": "https://github.com/laravel-fans/laravel-docker/tree/0.4.0"
+            },
+            "time": "2021-11-01T15:06:13+00:00"
         },
         {
             "name": "laravel-fans/lint",
